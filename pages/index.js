@@ -1,30 +1,18 @@
 import { useEffect, useState } from 'react';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import Link from 'next/link';
 
 import { db } from '../firebase';
 
+import { PlusIcon } from '@heroicons/react/outline';
+
 import Transaction from '../components/transaction';
 
-import { TransactionContext } from './transaction-context';
-import TransactionForm from '../components/transaction-form';
-import TransactionList from '../components/transaction-list';
-
-import { PlusIcon } from '@heroicons/react/outline';
-import Link from 'next/link';
-
 export default function Home() {
-  // const [isAlertOpen, setAlertOpen] = useState(false);
-  // const [alertType, setAlertType] = useState('success');
-  // const [alertMsg, setAlertMsg] = useState('');
-
-  // const showAlert = (type, msg) => {
-  //   setAlertType(type);
-  //   setAlertMsg(msg);
-  //   setAlertOpen(true);
-  // };
-
+  // var transactions
   const [transactions, setTransactions] = useState([]);
 
+  // get transactions data
   useEffect(() => {
     const collectionRef = collection(db, 'transactions');
     const q = query(collectionRef, orderBy('timestamp', 'desc'));
@@ -41,6 +29,7 @@ export default function Home() {
     return unsubscribe;
   }, []);
 
+  // calculate balance
   const getBalance = () => {
     let credit = 0;
     let debit = 0;
@@ -57,13 +46,7 @@ export default function Home() {
   };
 
   return (
-    // <TransactionContext.Provider value={{ showAlert }}>
     <div className="w-full text-gray-900">
-      {/* <div>
-        {isAlertOpen}
-        {alertType}
-        {alertMsg}
-      </div> */}
       <div className="bg-gray-50 border-b-2 border-gray-200">
         <div className="max-w-3xl mx-auto">
           <div className="p-4 pb-0 text-end">
@@ -101,6 +84,5 @@ export default function Home() {
         </Link>
       </div>
     </div>
-    // </TransactionContext.Provider>
   );
 }
