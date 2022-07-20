@@ -1,25 +1,59 @@
-import { useState } from 'react';
-import Head from 'next/head';
-import Image from 'next/image';
-import styles from '../styles/Home.module.css';
+import { useEffect, useState } from 'react';
+import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+
+import { db } from '../firebase';
+
+import Transaction from '../components/transaction';
 
 import { TransactionContext } from './transaction-context';
 import TransactionForm from '../components/transaction-form';
 import TransactionList from '../components/transaction-list';
-import Loading from '../components/loading';
 
 import { PlusIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
 
 export default function Home() {
-  const [isAlertOpen, setAlertOpen] = useState(false);
-  const [alertType, setAlertType] = useState('success');
-  const [alertMsg, setAlertMsg] = useState('');
+  // const [isAlertOpen, setAlertOpen] = useState(false);
+  // const [alertType, setAlertType] = useState('success');
+  // const [alertMsg, setAlertMsg] = useState('');
 
-  const showAlert = (type, msg) => {
-    setAlertType(type);
-    setAlertMsg(msg);
-    setAlertOpen(true);
+  // const showAlert = (type, msg) => {
+  //   setAlertType(type);
+  //   setAlertMsg(msg);
+  //   setAlertOpen(true);
+  // };
+
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    const collectionRef = collection(db, 'transactions');
+    const q = query(collectionRef, orderBy('timestamp', 'desc'));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      setTransactions(
+        querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+          timestamp: doc.data().timestamp?.toDate().getTime(),
+        }))
+      );
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const getBalance = () => {
+    let credit = 0;
+    let debit = 0;
+    let balance = 0;
+
+    transactions.map((transaction) => {
+      if (transaction.type == 'credit') credit += Number(transaction.amount);
+      if (transaction.type == 'debit') debit += Number(transaction.amount);
+    });
+
+    balance = debit - credit;
+
+    return balance;
   };
 
   return (
@@ -38,14 +72,25 @@ export default function Home() {
           </div>
           <div className="p-4">
             <p className="text-sm text-gray-600">Total Balance</p>
-            <p className="text-5xl font-bold ">5000</p>
+            <p className="text-5xl font-bold ">{getBalance()}</p>
           </div>
         </div>
       </div>
       <div className="max-w-3xl mx-auto">
         <div className="p-4 pb-20">
           <p className="font-bold mb-4">Transactions</p>
-          <TransactionList />
+          <div className="grid grid-cols-1 gap-4">
+            {transactions.map((transaction) => (
+              <Transaction
+                key={transaction.id}
+                id={transaction.id}
+                amount={transaction.amount}
+                name={transaction.name}
+                type={transaction.type}
+                timestamp={transaction.timestamp}
+              />
+            ))}
+          </div>
         </div>
       </div>
       <div className="fixed bottom-4 lg:bottom-10 right-4 lg:right-10">
