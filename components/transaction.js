@@ -1,7 +1,8 @@
 import { deleteDoc, doc } from 'firebase/firestore';
-import moment from 'moment';
 import { useRouter } from 'next/router';
+
 import { db } from '../firebase';
+
 import {
   TrendingUpIcon,
   TrendingDownIcon,
@@ -11,6 +12,7 @@ import {
 const Transaction = ({ id, amount, name, type, timestamp }) => {
   const router = useRouter();
 
+  // delete transaction
   const deleteTransaction = async (id, e) => {
     e.stopPropagation();
 
@@ -18,15 +20,8 @@ const Transaction = ({ id, amount, name, type, timestamp }) => {
     await deleteDoc(docRef);
   };
 
-  const transactionDetail = (id) => {
-    router.push(`/transaction/${id}`);
-  };
-
   return (
-    <div
-      className="col-span-1  border border-gray-100 p-3 rounded-lg hover:shadow-lg transition ease-in-out cursor-pointer"
-      onClick={(e) => transactionDetail(id)}
-    >
+    <div className="col-span-1  border border-gray-100 p-3 rounded-lg hover:shadow-lg transition ease-in-out cursor-pointer">
       <div className="flex flex-row w-full">
         <div className="flex flex-row items-center mr-auto">
           <div className="w-12 h-12 min-w-min rounded-full mr-4 flex items-center justify-center border border-gray-400">

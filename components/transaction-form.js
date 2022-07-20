@@ -1,16 +1,13 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 import { db } from '../firebase';
 
-import { TransactionContext } from '../pages/transaction-context';
-import Link from 'next/link';
 import { ArrowNarrowLeftIcon } from '@heroicons/react/outline';
-import { useRouter } from 'next/router';
 
 const TransactionForm = () => {
-  // const { showAlert } = useContext(TransactionContext);
-
   const router = useRouter();
 
   const [isLoading, setLoading] = useState(false);
@@ -21,6 +18,7 @@ const TransactionForm = () => {
     type: 'credit',
   });
 
+  // add transaction
   const onAdd = async () => {
     setLoading(true);
 
@@ -36,8 +34,6 @@ const TransactionForm = () => {
     });
 
     router.push(`/`);
-
-    // showAlert('success', `Transaction with id ${docRef.id} added`);
   };
 
   return (

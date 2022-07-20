@@ -1,5 +1,6 @@
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import Link from 'next/link';
+
 import { db } from '../../firebase';
 
 const TransactionDetail = ({ transactionProps }) => {
