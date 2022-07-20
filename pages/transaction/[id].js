@@ -5,8 +5,6 @@ import { db } from '../../firebase';
 const TransactionDetail = ({ transactionProps }) => {
   const transaction = JSON.parse(transactionProps);
 
-  console.log(transaction);
-
   return (
     <div>
       <Link href="/">

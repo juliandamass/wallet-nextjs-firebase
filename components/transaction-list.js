@@ -11,7 +11,6 @@ const TransactionList = () => {
   useEffect(() => {
     const collectionRef = collection(db, 'transactions');
     const q = query(collectionRef, orderBy('timestamp', 'desc'));
-    console.log(q);
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       setTransactions(
         querySnapshot.docs.map((doc) => ({
@@ -26,12 +25,14 @@ const TransactionList = () => {
   }, []);
 
   return (
-    <div>
+    <div className="grid grid-cols-1 gap-4">
       {transactions.map((transaction) => (
         <Transaction
           key={transaction.id}
           id={transaction.id}
+          amount={transaction.amount}
           name={transaction.name}
+          type={transaction.type}
           timestamp={transaction.timestamp}
         />
       ))}
